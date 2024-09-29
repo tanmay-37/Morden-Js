@@ -1,4 +1,4 @@
-const getTodos = (callback) => {
+const getTodos = (resource, callback) => {
     const request = new XMLHttpRequest();
     
     
@@ -7,15 +7,17 @@ const getTodos = (callback) => {
         //console.log(request, request.readyState);
         
         if(request.readyState === 4 && request.status === 200){
-            console.log(request, request.responseText)
-            callback(undefined, request.responseText);
+            //console.log(request, request.responseText)
+
+            const data = JSON.parse(request.responseText);
+            callback(undefined, data);
         }else if(request.readyState === 4) {
             console.log('Could not fetch the data');
             callback('Could not fetch data', undefined);
         }
 });
 
-request.open('GET','https://jsonplaceholder.typicode.com/todoss/');
+request.open('GET',resource);
 
 request.send();
 }
@@ -24,14 +26,14 @@ console.log(1);
 console.log(2);
 
 
-getTodos((err, data) => {
-    console.log('callback is fired')
-    if(err){
-        console.log(err)
-    }
-    else{
+getTodos('luigi.json', (err, data) => {
+    console.log(data)
+    getTodos('mario.json', (err,data) => {
         console.log(data);
-    }
+        getTodos('shaun.json', (err, data) => {
+            console.log(data);
+        })
+    })
 });
 
 
