@@ -1,41 +1,51 @@
-const getTodos = (resource, callback) => {
-    const request = new XMLHttpRequest();
+const getTodos = (resource) => {
     
-    
-    
-    request.addEventListener('readystatechange', () => {
-        //console.log(request, request.readyState);
+    return new Promise((resolve, reject) => {
+        const request = new XMLHttpRequest();
+
         
-        if(request.readyState === 4 && request.status === 200){
+        request.addEventListener('readystatechange', () => {
+            //console.log(request, request.readyState);
+            
+            if(request.readyState === 4 && request.status === 200){
             //console.log(request, request.responseText)
 
             const data = JSON.parse(request.responseText);
-            callback(undefined, data);
+            resolve(data);
         }else if(request.readyState === 4) {
-            console.log('Could not fetch the data');
-            callback('Could not fetch data', undefined);
+            reject('error getting resources')
         }
+    });
+
+    request.open('GET',resource);
+    request.send();
 });
+};
 
-request.open('GET',resource);
+getTodos('luigi.json').then(data => {
+    console.log('promise resolved : ',data);
+}).catch(err => {
+    console.log('Promise rejected : ',err);
+})
+// promises example
 
-request.send();
+const getSomething = () => {
+    return new Promise((resolve, reject) =>{
+        // fetch something
+
+        // resolve('some data');
+        reject('some error');
+    });
 }
 
-console.log(1);
-console.log(2);
+// getSomething().then((data) => {
+//     console.log(data);
+// },(err) => {
+//     console.log(err);
+// });
 
-
-getTodos('luigi.json', (err, data) => {
-    console.log(data)
-    getTodos('mario.json', (err,data) => {
-        console.log(data);
-        getTodos('shaun.json', (err, data) => {
-            console.log(data);
-        })
-    })
-});
-
-
-console.log(3);
-console.log(4);
+// getSomething().then(data => {
+//     console.log(data);
+// }).catch(err => {
+//     console.log(err);
+// })
